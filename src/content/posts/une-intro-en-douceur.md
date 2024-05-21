@@ -1,7 +1,7 @@
 ---
 title: "Une introduction en douceur au monde bordelique de l'informatique quantique"
 author: Alexandre Hascour
-pubDatetime: 2024-05-27T11:00:00Z
+pubDatetime: 2024-05-21T11:00:00Z
 slug: une-intro-en-douceur
 featured: false
 draft: false

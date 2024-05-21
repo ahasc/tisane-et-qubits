@@ -9,9 +9,13 @@ import { SITE } from "./src/config";
 // https://astro.build/config
 export default defineConfig({
   site: SITE.website,
-  integrations: [tailwind({
-    applyBaseStyles: false
-  }), react(), sitemap()],
+  integrations: [
+    tailwind({
+      applyBaseStyles: false
+    }),
+    react(),
+    sitemap(),
+  ],
   markdown: {
     remarkPlugins: [remarkToc, [remarkCollapse, {
       test: "Table of contents"
