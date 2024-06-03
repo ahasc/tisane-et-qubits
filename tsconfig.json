@@ -5,13 +5,14 @@
     "jsx": "react-jsx",
     "paths": {
       "@assets/*": ["assets/*"],
+      "@db/*": ["db/*"],
       "@config": ["config.ts"],
       "@components/*": ["components/*"],
       "@content/*": ["content/*"],
       "@layouts/*": ["layouts/*"],
       "@pages/*": ["pages/*"],
       "@styles/*": ["styles/*"],
-      "@utils/*": ["utils/*"],
-    },
-  },
+      "@utils/*": ["utils/*"]
+    }
+  }
 }

@@ -1,41 +1,18 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
-import Posts from "@layouts/Posts.astro";
+import { getCollection } from "astro:content";
 import PostDetails from "@layouts/PostDetails.astro";
-import getSortedPosts from "@utils/getSortedPosts";
-import getPageNumbers from "@utils/getPageNumbers";
-import getPagination from "@utils/getPagination";
+import { getPostComments } from "@db/repositories/comments.repository";
 
-export interface Props {
-  post: CollectionEntry<"posts">;
-}
-
-export async function getStaticPaths() {
-  const posts = await getCollection("posts", ({ data }) => !data.draft);
-
-  const postResult = posts.map(post => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
-
-  const pagePaths = getPageNumbers(posts.length).map(pageNum => ({
-    params: { slug: String(pageNum) },
-  }));
-
-  return [...postResult, ...pagePaths];
-}
-
-const { slug } = Astro.params;
-const { post } = Astro.props;
+export const prerender = false;
 
 const posts = await getCollection("posts");
+const post = posts.find(post => post.slug === Astro.params?.slug);
 
-const sortedPosts = getSortedPosts(posts);
+if (!post) {
+  return Astro.redirect("/404");
+}
 
-const pagination = getPagination({
-  posts: sortedPosts,
-  page: slug,
-});
+const comments = await getPostComments(post.slug);
 ---
 
-{post ? <PostDetails post={post} /> : <Posts {...pagination} />}
+<PostDetails post={post} comments={comments.rows} />

@@ -3,7 +3,8 @@ import { getCollection } from "astro:content";
 import Posts from "@layouts/Posts.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import getPagination from "@utils/getPagination";
-import { Debug } from 'astro:components';
+
+export const prerender = false;
 
 const posts = await getCollection("posts");
 const sortedPosts = getSortedPosts(posts);
@@ -13,4 +14,5 @@ const pagination = getPagination({
   isIndex: true,
 });
 ---
+
 <Posts {...pagination} />

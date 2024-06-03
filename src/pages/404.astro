@@ -4,6 +4,8 @@ import Layout from "@layouts/Layout.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import LinkButton from "@components/LinkButton.astro";
+
+export const prerender = true;
 ---
 
 <Layout title={`404 Not Found | ${SITE.title}`}>
@@ -18,7 +20,7 @@ import LinkButton from "@components/LinkButton.astro";
         href="/"
         className="my-6 text-lg underline decoration-dashed underline-offset-8"
       >
-        Go back home
+        Retour à l'accueil
       </LinkButton>
     </div>
   </main>

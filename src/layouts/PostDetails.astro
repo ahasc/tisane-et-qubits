@@ -6,12 +6,14 @@ import Datetime from "@components/Datetime";
 import type { CollectionEntry } from "astro:content";
 import { slugifyStr } from "@utils/slugify";
 import { SITE } from "@config";
+import Comment from "@components/Comment";
 
 export interface Props {
   post: CollectionEntry<"posts">;
+  comments: any[];
 }
 
-const { post } = Astro.props;
+const { post, comments } = Astro.props;
 
 const {
   title,
@@ -60,7 +62,7 @@ const layoutProps = {
         ><path
           d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
         ></path>
-      </svg><span>Go back</span>
+      </svg><span>Retour</span>
     </button>
   </div>
   <main id="main-content">
@@ -74,7 +76,7 @@ const layoutProps = {
     <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl">
       <Content />
     </article>
-    <br>
+    <br />
 
     <!-- <ul class="my-8">
       {tags.map(tag => <Tag tag={slugifyStr(tag)} />)}
@@ -92,9 +94,48 @@ const layoutProps = {
             d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
           ></path>
         </svg>
-        <span>Retour en haut</span>
+        <span>Retourner au début</span>
       </button>
     </div>
+    <section class="bg-white dark:bg-gray-900 py-8 lg:py-16 antialiased">
+      <div class="max-w-2xl mx-auto px-4">
+        <div class="flex justify-between items-center mb-6">
+          <h2
+            class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white"
+          >
+            Commentaires
+          </h2>
+        </div>
+        <form class="mb-6">
+          <div
+            class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+          >
+            <label for="comment" class="sr-only">Votre commentaire</label>
+            <textarea
+              id="comment"
+              rows="6"
+              class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+              placeholder="Ecrire un commentaire..."
+              required></textarea>
+          </div>
+          <button
+            type="submit"
+            class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
+          >
+            Ajouter un commentaire
+          </button>
+        </form>
+        {
+          comments.map(comment => (
+            <Comment
+              author={comment.author}
+              date={comment.date}
+              text={comment.text}
+            />
+          ))
+        }
+      </div>
+    </section>
   </main>
   <Footer />
 </Layout>

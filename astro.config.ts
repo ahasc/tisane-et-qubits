@@ -1,3 +1,4 @@
+import vercel from "@astrojs/vercel/serverless";
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
@@ -11,24 +12,32 @@ export default defineConfig({
   site: SITE.website,
   integrations: [
     tailwind({
-      applyBaseStyles: false
+      applyBaseStyles: false,
     }),
     react(),
     sitemap(),
   ],
   markdown: {
-    remarkPlugins: [remarkToc, [remarkCollapse, {
-      test: "Table of contents"
-    }]],
+    remarkPlugins: [
+      remarkToc,
+      [
+        remarkCollapse,
+        {
+          test: "Table of contents",
+        },
+      ],
+    ],
     shikiConfig: {
       theme: "one-dark-pro",
-      wrap: true
-    }
+      wrap: true,
+    },
   },
   vite: {
     optimizeDeps: {
-      exclude: ["@resvg/resvg-js"]
-    }
+      exclude: ["@resvg/resvg-js"],
+    },
   },
-  scopedStyleStrategy: "where"
+  scopedStyleStrategy: "where",
+  output: "hybrid",
+  adapter: vercel(),
 });

@@ -10,6 +10,8 @@ import Socials from "@components/Socials.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import { SOCIALS } from "@config";
 
+export const prerender = false;
+
 const posts = await getCollection("posts");
 
 const sortedPosts = getSortedPosts(posts);
@@ -44,9 +46,10 @@ const socialCount = SOCIALS.filter(social => social.active).length;
       <p>L'informatique, c'est compliqué.</p>
       <p>L'informatique quantique, c'est encore plus compliqué alors ?</p>
       <p>
-        Pourtant, c'est un champ de l'informatique
-        qui pourra, à l'avenir, revolutionner plusieurs aspects de nos sociétés. Et non, il ne s'agit pas de magie noire, et je pense que le 
-        sujet peut être accessible à n'importe qui (même à ma mère) !
+        Pourtant, c'est un champ de l'informatique qui pourra, à l'avenir,
+        revolutionner plusieurs aspects de nos sociétés. Et non, il ne s'agit
+        pas de magie noire, et je pense que le sujet peut être accessible à
+        n'importe qui (même à ma mère) !
       </p>
       <p>Telle est ma mission.</p>
       <p>Telle est ma destinée.</p>
@@ -54,7 +57,9 @@ const socialCount = SOCIALS.filter(social => social.active).length;
       {
         socialCount > 0 && (
           <div class="social-wrapper">
-            <div class="social-links">Suis moi sur mes reseaux :</div>
+            <div class="social-links">
+              Suis moi pour être au courant des publications :
+            </div>
             <Socials />
           </div>
         )
