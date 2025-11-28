@@ -352,24 +352,72 @@ const readingTimeText = formatReadingTime(readingTime);
   }
 
   @media (max-width: 768px) {
+    .article {
+      padding: 0 1rem 2rem 1rem;
+    }
+
+    .article-header {
+      padding: 2rem 1.5rem;
+    }
+
     .article-header h1 {
-      font-size: 2.25rem;
+      font-size: 1.75rem;
     }
 
     .lead {
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
 
     .article-content {
-      font-size: 1.05rem;
+      font-size: 1rem;
+    }
+
+    .article-content :global(h2) {
+      font-size: 1.5rem;
+    }
+
+    .article-content :global(h3) {
+      font-size: 1.25rem;
+    }
+
+    .article-footer {
+      padding: 0 1rem 1rem 1rem;
+    }
+
+    .reactions-section h3 {
+      font-size: 1.25rem;
+    }
+
+    .reactions-wrap {
+      justify-content: center;
     }
 
     .nav-actions {
       flex-direction: column;
     }
 
+    .breadcrumb {
+      padding: 1rem 0;
+      font-size: 0.85rem;
+    }
+
     .breadcrumb .current {
-      max-width: 150px;
+      max-width: 120px;
+    }
+
+    .header-meta {
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .article-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .article {
+      padding: 0 0.75rem 2rem 0.75rem;
     }
   }
 </style>

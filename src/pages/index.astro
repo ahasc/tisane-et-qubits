@@ -321,16 +321,22 @@ const latestPosts = sortedPosts.slice(0, 3);
   }
 
   @media (max-width: 768px) {
-    .hero h1 {
-      font-size: 2.5rem;
+    .hero {
+      padding: 1.5rem 1rem 2rem;
+    }
+
+    .hero-title {
+      font-size: 2rem;
     }
 
     .hero p {
-      font-size: 1.1rem;
+      font-size: 1rem;
+      padding: 0 0.5rem;
     }
 
     .hero-cta {
       flex-direction: column;
+      padding: 0 1rem;
     }
 
     .btn-primary, .btn-secondary {
@@ -338,12 +344,42 @@ const latestPosts = sortedPosts.slice(0, 3);
       text-align: center;
     }
 
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.5rem;
+    }
+
     .posts-grid {
       grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .post-card {
+      padding: 1.5rem;
     }
 
     .categories-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .category-card {
+      padding: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-title {
+      font-size: 1.75rem;
+    }
+
+    .emoji-fix {
+      font-size: 0.85em;
     }
   }
 </style>
