@@ -1,0 +1,77 @@
+---
+// ViewCount - Affiche le nombre de vues d'une page
+interface Props {
+  page: string;
+}
+
+const { page } = Astro.props;
+---
+
+<span class="view-count" data-page={page}>
+  <span class="view-icon">👁️</span>
+  <span class="view-number">...</span>
+</span>
+
+<script src="https://unpkg.com/parse@5.3.0/dist/parse.min.js"></script>
+<script is:inline define:vars={{ appId: import.meta.env.PUBLIC_BACK4APP_APP_ID, jsKey: import.meta.env.PUBLIC_BACK4APP_JS_KEY, serverURL: import.meta.env.PUBLIC_BACK4APP_URL }}>
+  window.addEventListener('load', function() {
+    // Initialize Parse
+    Parse.initialize(appId, jsKey);
+    Parse.serverURL = serverURL;
+
+    // Fonction pour récupérer le nombre de vues
+    async function fetchViewCount() {
+      const viewCountElements = document.querySelectorAll('.view-count');
+      
+      for (const element of viewCountElements) {
+        const page = element.getAttribute('data-page');
+        const numberSpan = element.querySelector('.view-number');
+        
+        try {
+          const PageView = Parse.Object.extend('PageView');
+          const query = new Parse.Query(PageView);
+          query.equalTo('page', page);
+          
+          const count = await query.count();
+          
+          if (numberSpan) {
+            numberSpan.textContent = count.toLocaleString('fr-FR');
+          }
+        } catch (error) {
+          if (numberSpan) {
+            numberSpan.textContent = '0';
+          }
+          console.error('View count fetch failed:', error);
+        }
+      }
+    }
+
+    // Charger le compteur
+    fetchViewCount();
+  });
+</script>
+
+<style>
+  .view-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    padding: 0.3rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .view-icon {
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+
+  .view-number {
+    font-variant-numeric: tabular-nums;
+    min-width: 1.5rem;
+    text-align: center;
+  }
+</style>

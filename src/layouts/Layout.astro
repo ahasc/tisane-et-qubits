@@ -1,4 +1,6 @@
 ---
+import PageTracker from '../components/PageTracker.astro';
+
 interface Props {
   title: string;
 }
@@ -21,7 +23,7 @@ const { title } = Astro.props;
     <main>
       <slot />
     </main>
-
+    <PageTracker />
   </body>
 </html>
 
