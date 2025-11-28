@@ -5,7 +5,6 @@ import { CollectionEntry } from 'astro:content';
 import ReactionButton from '../../components/ReactionButton.astro';
 import Comments from '../../components/Comments.astro';
 import CategoryBadge from '../../components/CategoryBadge.astro';
-import ViewCount from '../../components/ViewCount.astro';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime';
 
 export async function getStaticPaths() {
@@ -43,7 +42,6 @@ const readingTimeText = formatReadingTime(readingTime);
         <div class="header-meta">
           <CategoryBadge category={entry.data.category} />
           <span class="read-time">☕ {readingTimeText} de lecture</span>
-          <ViewCount page={`/blog/${entry.slug}`} />
         </div>
         <h1>{entry.data.title}</h1>
         <p class="lead">{entry.data.description}</p>

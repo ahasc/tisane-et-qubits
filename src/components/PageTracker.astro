@@ -1,9 +1,12 @@
 ---
 // PageTracker - Enregistre automatiquement les vues de pages dans Back4App
+const isDev = import.meta.env.DEV;
 ---
 
-<script src="https://unpkg.com/parse@5.3.0/dist/parse.min.js"></script>
-<script is:inline define:vars={{ appId: import.meta.env.PUBLIC_BACK4APP_APP_ID, jsKey: import.meta.env.PUBLIC_BACK4APP_JS_KEY, serverURL: import.meta.env.PUBLIC_BACK4APP_URL }}>
+{!isDev && (
+  <>
+    <script src="https://unpkg.com/parse@5.3.0/dist/parse.min.js"></script>
+    <script is:inline define:vars={{ appId: import.meta.env.PUBLIC_BACK4APP_APP_ID, jsKey: import.meta.env.PUBLIC_BACK4APP_JS_KEY, serverURL: import.meta.env.PUBLIC_BACK4APP_URL }}>
   window.addEventListener('load', function() {
     // Initialize Parse
     Parse.initialize(appId, jsKey);
@@ -28,4 +31,6 @@
     // Enregistrer la vue
     trackPageView();
   });
-</script>
+    </script>
+  </>
+)}
