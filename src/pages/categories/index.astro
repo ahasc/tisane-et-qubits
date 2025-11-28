@@ -1,0 +1,228 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import CategoryBadge from '../../components/CategoryBadge.astro';
+
+const allPosts = await getCollection('blog');
+
+// Group posts by category
+const categories = {
+  'algorithmes': { name: 'Algorithmes', icon: '🔢', posts: [] as any[] },
+  'hardware': { name: 'Hardware', icon: '⚙️', posts: [] as any[] },
+  'cryptographie': { name: 'Cryptographie', icon: '🔐', posts: [] as any[] },
+  'applications': { name: 'Applications', icon: '🚀', posts: [] as any[] },
+  'theorie': { name: 'Théorie', icon: '📐', posts: [] as any[] },
+};
+
+allPosts.forEach(post => {
+  const category = post.data.category;
+  if (categories[category]) {
+    categories[category].posts.push(post);
+  }
+});
+
+// Sort posts within each category by date
+Object.values(categories).forEach(cat => {
+  cat.posts.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+});
+---
+
+<Layout title="Catégories - Quantum Computing Blog">
+  <div class="container">
+    <div class="page-header">
+      <a href="/" class="back-link">← Retour à l'accueil</a>
+      <h1>🏷️ Toutes les catégories</h1>
+      <p>Explorez les articles par thématique</p>
+    </div>
+
+    <div class="categories-grid">
+      {Object.entries(categories).map(([key, cat]) => (
+        <section class="category-card">
+          <div class="card-header">
+            <span class="cat-icon">{cat.icon}</span>
+            <span class="post-badge">{cat.posts.length}</span>
+          </div>
+          <h2>{cat.name}</h2>
+          <p class="cat-description">
+            {cat.posts.length} article{cat.posts.length > 1 ? 's' : ''} disponible{cat.posts.length > 1 ? 's' : ''}
+          </p>
+          {cat.posts.length > 0 && (
+            <div class="posts-preview">
+              {cat.posts.slice(0, 3).map(post => (
+                <a href={`/blog/${post.slug}`} class="preview-item">
+                  <span class="preview-title">{post.data.title}</span>
+                  <span class="preview-arrow">→</span>
+                </a>
+              ))}
+            </div>
+          )}
+          <a href={`/categories/${key}`} class="view-all-btn">
+            Voir tous les articles →
+          </a>
+        </section>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page-header {
+    text-align: center;
+    padding: 3rem 0 4rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+
+  .back-link:hover {
+    color: var(--primary);
+    gap: 0.75rem;
+  }
+
+  .page-header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .page-header p {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .category-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s;
+  }
+
+  .category-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .cat-icon {
+    font-size: 2.5rem;
+  }
+
+  .post-badge {
+    background: rgba(139, 157, 195, 0.2);
+    color: var(--primary);
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .category-card h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .cat-description {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .posts-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-elevated);
+    border-radius: 8px;
+  }
+
+  .preview-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+  }
+
+  .preview-item:hover {
+    background: var(--bg-card);
+    color: var(--primary);
+  }
+
+  .preview-title {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .preview-arrow {
+    opacity: 0;
+    transition: all 0.3s;
+  }
+
+  .preview-item:hover .preview-arrow {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+
+  .view-all-btn {
+    display: block;
+    text-align: center;
+    padding: 0.75rem;
+    background: transparent;
+    color: var(--primary);
+    text-decoration: none;
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .view-all-btn:hover {
+    background: var(--primary);
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .page-header h1 {
+      font-size: 2.25rem;
+    }
+
+    .categories-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

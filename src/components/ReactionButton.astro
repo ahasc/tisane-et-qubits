@@ -1,0 +1,193 @@
+---
+interface Props {
+  emoji: string;
+  count: number;
+  label: string;
+  active?: boolean;
+}
+
+const { emoji, count, label, active = false } = Astro.props;
+---
+
+<button 
+  class="reaction-btn" 
+  data-reaction={label}
+  class:list={['reaction-btn', { active }]}
+>
+  <span class="emoji">{emoji}</span>
+  <span class="count">{count}</span>
+</button>
+
+<style>
+  .reaction-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 1.1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .reaction-btn:hover {
+    background: var(--bg-elevated);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  .reaction-btn.active {
+    background: rgba(139, 157, 195, 0.2);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .emoji {
+    font-size: 1.3rem;
+    line-height: 1;
+    filter: grayscale(0.3);
+    transition: all 0.3s;
+  }
+
+  .reaction-btn:hover .emoji,
+  .reaction-btn.active .emoji {
+    filter: grayscale(0);
+    transform: scale(1.15);
+  }
+
+  .count {
+    font-weight: 600;
+    min-width: 22px;
+    text-align: center;
+    color: var(--text);
+  }
+</style>
+
+<script src="https://unpkg.com/parse@5.3.0/dist/parse.min.js"></script>
+<script is:inline define:vars={{ appId: import.meta.env.PUBLIC_BACK4APP_APP_ID, jsKey: import.meta.env.PUBLIC_BACK4APP_JS_KEY, serverURL: import.meta.env.PUBLIC_BACK4APP_URL }}>
+  window.addEventListener('load', function() {
+    // Initialize Parse
+    Parse.initialize(appId, jsKey);
+    Parse.serverURL = serverURL;
+
+    // Get or create user ID
+    function getUserId() {
+      let userId = localStorage.getItem('userId');
+      if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9) + Date.now();
+        localStorage.setItem('userId', userId);
+      }
+      return userId;
+    }
+
+  // Load reactions from Back4App
+  async function loadReactions() {
+    const postSlug = window.location.pathname.split('/').pop() || '';
+    const userId = getUserId();
+
+    try {
+      const Reaction = Parse.Object.extend('Reaction');
+      const query = new Parse.Query(Reaction);
+      query.equalTo('postSlug', postSlug);
+      
+      const results = await query.find();
+      
+      // Count reactions by emoji
+      const counts = {};
+      const userReactions = new Set();
+      
+      results.forEach((reaction) => {
+        const emoji = reaction.get('emoji');
+        const reactionUserId = reaction.get('userId');
+        
+        counts[emoji] = (counts[emoji] || 0) + 1;
+        if (reactionUserId === userId) {
+          userReactions.add(emoji);
+        }
+      });
+
+      // Update UI
+      document.querySelectorAll('.reaction-btn').forEach(btn => {
+        const button = btn;
+        const emoji = button.dataset.reaction || '';
+        const countSpan = button.querySelector('.count');
+        
+        if (countSpan) {
+          countSpan.textContent = (counts[emoji] || 0).toString();
+        }
+        
+        if (userReactions.has(emoji)) {
+          button.classList.add('active');
+        }
+      });
+    } catch (error) {
+      console.error('Error loading reactions:', error);
+    }
+  }
+
+  // Handle reaction click
+  document.querySelectorAll('.reaction-btn').forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+      const button = e.currentTarget;
+      
+      // Prevent multiple clicks
+      if (button.disabled) return;
+      button.disabled = true;
+      
+      const countSpan = button.querySelector('.count');
+      const emoji = button.dataset.reaction || '';
+      const postSlug = window.location.pathname.split('/').pop() || '';
+      const userId = getUserId();
+      
+      const isActive = button.classList.contains('active');
+      let count = parseInt(countSpan.textContent || '0');
+
+      try {
+        const Reaction = Parse.Object.extend('Reaction');
+        
+        if (isActive) {
+          // Remove reaction
+          const query = new Parse.Query(Reaction);
+          query.equalTo('postSlug', postSlug);
+          query.equalTo('emoji', emoji);
+          query.equalTo('userId', userId);
+          
+          const results = await query.find();
+          
+          if (results.length > 0) {
+            await results[0].destroy();
+            button.classList.remove('active');
+            count--;
+            countSpan.textContent = count.toString();
+          }
+        } else {
+          // Add reaction
+          const reaction = new Reaction();
+          reaction.set('postSlug', postSlug);
+          reaction.set('emoji', emoji);
+          reaction.set('userId', userId);
+          
+          await reaction.save();
+          button.classList.add('active');
+          count++;
+          countSpan.textContent = count.toString();
+        }
+      } catch (error) {
+        console.error('Error updating reaction:', error);
+      } finally {
+        // Re-enable button after a short delay
+        setTimeout(() => {
+          button.disabled = false;
+        }, 300);
+      }
+    });
+  });
+
+    // Load reactions on page load
+    loadReactions();
+  });
+</script>

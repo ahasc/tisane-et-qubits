@@ -1,162 +1,349 @@
 ---
-import { getCollection } from "astro:content";
-import Layout from "@layouts/Layout.astro";
-import Header from "@components/Header.astro";
-import Footer from "@components/Footer.astro";
-import LinkButton from "@components/LinkButton.astro";
-import Hr from "@components/Hr.astro";
-import Card from "@components/Card";
-import Socials from "@components/Socials.astro";
-import getSortedPosts from "@utils/getSortedPosts";
-import { SOCIALS } from "@config";
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import CategoryBadge from '../components/CategoryBadge.astro';
 
-export const prerender = false;
-
-const posts = await getCollection("posts");
-
-const sortedPosts = getSortedPosts(posts);
-const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
-const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
-
-const socialCount = SOCIALS.filter(social => social.active).length;
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+const latestPosts = sortedPosts.slice(0, 3);
 ---
 
-<Layout>
-  <Header />
-  <main id="main-content">
-    <section id="hero">
-      <h1>L'informatique quantique expliquée, une tisane à la main</h1>
-      <!-- <a
-        target="_blank"
-        href="/rss.xml"
-        class="rss-link"
-        aria-label="rss feed"
-        title="RSS Feed"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="rss-icon"
-          ><path
-            d="M19 20.001C19 11.729 12.271 5 4 5v2c7.168 0 13 5.832 13 13.001h2z"
-          ></path><path
-            d="M12 20.001h2C14 14.486 9.514 10 4 10v2c4.411 0 8 3.589 8 8.001z"
-          ></path><circle cx="6" cy="18" r="2"></circle>
-        </svg>
-        <span class="sr-only">RSS Feed</span>
-      </a> -->
-
-      <p>L'informatique, c'est compliqué.</p>
-      <p>L'informatique quantique, c'est encore plus compliqué alors ?</p>
+<Layout title="Quantum Computing Blog - Accueil">
+  <div class="container">
+    <div class="hero">
+      <div class="hero-badge">✨ Vulgarisation scientifique</div>
+      <h1 class="hero-title"><span class="emoji-fix">🍵</span> Prenez une tisane, parlons Qubits !</h1>
       <p>
-        Pourtant, c'est un champ de l'informatique qui pourra, à l'avenir,
-        revolutionner plusieurs aspects de nos sociétés. Et non, il ne s'agit
-        pas de magie noire, et je pense que le sujet peut être accessible à
-        n'importe qui (même à ma mère) !
+        L'informatique quantique expliquée simplement, avec des mots de tous les jours.
+        Installez-vous confortablement, on démystifie ensemble cet univers fascinant !
       </p>
-      <p>Telle est ma mission.</p>
-      <p>Telle est ma destinée.</p>
-      <p>Je vais me faire une tisane et je vous explique tout ça !</p>
-      {
-        socialCount > 0 && (
-          <div class="social-wrapper">
-            <div class="social-links">
-              Suis moi pour être au courant des publications :
+      <div class="hero-cta">
+        <a href="/blog" class="btn-primary">Explorer les articles</a>
+        <a href="/categories" class="btn-secondary">Parcourir les catégories</a>
+      </div>
+    </div>
+
+    <section class="featured-posts">
+      <div class="section-header">
+        <h2>📚 Derniers articles</h2>
+        <a href="/blog" class="view-all-link">Tout voir →</a>
+      </div>
+      <div class="posts-grid">
+        {latestPosts.map(post => (
+          <article class="post-card">
+            <div class="card-header">
+              <CategoryBadge category={post.data.category} />
+              <span class="post-date">
+                {post.data.pubDate.toLocaleDateString('fr-FR', { 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
+              </span>
             </div>
-            <Socials />
-          </div>
-        )
-      }
+            <h3>
+              <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+            </h3>
+            <p class="post-excerpt">{post.data.description}</p>
+            <div class="card-footer">
+              <span class="author">Par {post.data.author}</span>
+              <a href={`/blog/${post.slug}`} class="read-link">Lire →</a>
+            </div>
+          </article>
+        ))}
+      </div>
     </section>
 
-    <Hr />
-
-    {
-      featuredPosts.length > 0 && (
-        <>
-          <section id="featured">
-            <h2>Les articles du moment</h2>
-            <ul>
-              {featuredPosts.map(({ data, slug }) => (
-                <Card
-                  href={`/posts/${slug}/`}
-                  frontmatter={data}
-                  secHeading={false}
-                />
-              ))}
-            </ul>
-          </section>
-          {recentPosts.length > 0 && <Hr />}
-        </>
-      )
-    }
-
-    {
-      recentPosts.length > 0 && (
-        <section id="recent-posts">
-          <h2>Les derniers articles</h2>
-          <ul>
-            {recentPosts.map(
-              ({ data, slug }, index) =>
-                index < 4 && (
-                  <Card
-                    href={`/posts/${slug}/`}
-                    frontmatter={data}
-                    secHeading={false}
-                  />
-                )
-            )}
-          </ul>
-        </section>
-      )
-    }
-
-    <div class="all-posts-btn-wrapper">
-      <LinkButton href="/posts/">
-        Tous les articles
-        <svg xmlns="http://www.w3.org/2000/svg"
-          ><path
-            d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z"
-          ></path>
-        </svg>
-      </LinkButton>
-    </div>
-  </main>
-
-  <Footer />
+    <section class="categories-section">
+      <div class="section-header">
+        <h2>🏷️ Explorer par catégorie</h2>
+      </div>
+      <div class="categories-grid">
+        <a href="/categories/algorithmes" class="category-card">
+          <span class="cat-icon">🔢</span>
+          <h3>Algorithmes</h3>
+          <p>Découvrez les algorithmes quantiques révolutionnaires</p>
+        </a>
+        <a href="/categories/hardware" class="category-card">
+          <span class="cat-icon">⚙️</span>
+          <h3>Hardware</h3>
+          <p>Technologies et architectures quantiques</p>
+        </a>
+        <a href="/categories/cryptographie" class="category-card">
+          <span class="cat-icon">🔐</span>
+          <h3>Cryptographie</h3>
+          <p>Sécurité à l'ère quantique</p>
+        </a>
+        <a href="/categories/applications" class="category-card">
+          <span class="cat-icon">🚀</span>
+          <h3>Applications</h3>
+          <p>Cas d'usage réels de l'informatique quantique</p>
+        </a>
+        <a href="/categories/theorie" class="category-card">
+          <span class="cat-icon">📐</span>
+          <h3>Théorie</h3>
+          <p>Fondamentaux de la mécanique quantique</p>
+        </a>
+      </div>
+    </section>
+  </div>
 </Layout>
 
 <style>
-  /* ===== Hero Section ===== */
-  #hero {
-    @apply pb-6 pt-8;
-  }
-  #hero h1 {
-    @apply my-4 inline-block text-3xl font-bold sm:my-8 sm:text-5xl;
-  }
-  #hero .rss-link {
-    @apply mb-6;
-  }
-  #hero .rss-icon {
-    @apply mb-2 h-6 w-6 scale-110 fill-skin-accent sm:mb-3 sm:scale-125;
-  }
-  #hero p {
-    @apply my-2;
-  }
-  .social-wrapper {
-    @apply mt-4 flex flex-col sm:flex-row sm:items-center;
-  }
-  .social-links {
-    @apply mb-1 mr-2 whitespace-nowrap sm:mb-0;
+  .hero {
+    text-align: center;
+    padding: 2rem 2rem 2.5rem;
+    position: relative;
   }
 
-  /* ===== Featured & Recent Posts Sections ===== */
-  #featured,
-  #recent-posts {
-    @apply pb-6 pt-12;
+  .hero-badge {
+    display: inline-block;
+    background: rgba(139, 157, 195, 0.15);
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(139, 157, 195, 0.25);
   }
-  #featured h2,
-  #recent-posts h2 {
-    @apply text-2xl font-semibold tracking-wide;
+
+  .hero-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+    line-height: 1.2;
   }
-  .all-posts-btn-wrapper {
-    @apply my-8 text-center;
+
+  .hero p {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.8;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    border: 1px solid var(--primary);
+  }
+
+  .btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 157, 195, 0.25);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg-card);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  section {
+    margin: 1.5rem 0;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .view-all-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+
+  .view-all-link:hover {
+    color: var(--primary);
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .post-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    transition: all 0.3s;
+  }
+
+  .post-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .post-date {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .post-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.375rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .post-card h3 a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .post-card h3 a:hover {
+    color: var(--primary);
+  }
+
+  .post-excerpt {
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .author {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  .read-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+  }
+
+  .read-link:hover {
+    gap: 0.5rem;
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .category-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .category-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-4px);
+  }
+
+  .cat-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 1rem;
+    transition: transform 0.3s;
+  }
+
+  .category-card:hover .cat-icon {
+    transform: scale(1.1) rotate(-5deg);
+  }
+
+  .category-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .category-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+    }
+
+    .hero-cta {
+      flex-direction: column;
+    }
+
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      text-align: center;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .categories-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 </style>

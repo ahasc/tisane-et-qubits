@@ -1,0 +1,68 @@
+---
+interface Props {
+  category: string;
+}
+
+const { category } = Astro.props;
+
+const categoryConfig: Record<string, { color: string; label: string; icon: string }> = {
+  'algorithmes': { color: '#6366f1', label: 'Algorithmes', icon: '🔢' },
+  'hardware': { color: '#14b8a6', label: 'Hardware', icon: '⚙️' },
+  'cryptographie': { color: '#ec4899', label: 'Cryptographie', icon: '🔐' },
+  'applications': { color: '#f59e0b', label: 'Applications', icon: '🚀' },
+  'theorie': { color: '#8b5cf6', label: 'Théorie', icon: '📐' },
+};
+
+const config = categoryConfig[category] || { color: '#64748b', label: category, icon: '📁' };
+---
+
+<span class="category-badge" data-category={category}>
+  <span class="badge-icon">{config.icon}</span>
+  <span class="badge-label">{config.label}</span>
+</span>
+
+<style define:vars={{ badgeColor: config.color }}>
+  .category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background: rgba(var(--badge-color-rgb), 0.1);
+    color: var(--badgeColor);
+    border: 1px solid rgba(var(--badge-color-rgb), 0.2);
+    transition: all 0.3s;
+    --badge-color-rgb: 99, 102, 241;
+  }
+
+  .category-badge[data-category="algorithmes"] {
+    --badge-color-rgb: 139, 157, 195;
+  }
+
+  .category-badge[data-category="hardware"] {
+    --badge-color-rgb: 188, 108, 37;
+  }
+
+  .category-badge[data-category="cryptographie"] {
+    --badge-color-rgb: 221, 161, 94;
+  }
+
+  .category-badge[data-category="applications"] {
+    --badge-color-rgb: 244, 162, 97;
+  }
+
+  .category-badge[data-category="theorie"] {
+    --badge-color-rgb: 164, 181, 217;
+  }
+
+  .badge-icon {
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  .badge-label {
+    text-transform: capitalize;
+  }
+</style>

@@ -1,0 +1,249 @@
+---
+const postSlug = Astro.url.pathname.split('/').pop() || '';
+---
+
+<div class="comments-section">
+  <h3>💬 Commentaires</h3>
+  
+  <form class="comment-form" id="commentForm">
+    <input 
+      type="text" 
+      placeholder="Votre nom" 
+      id="commentName" 
+      required
+      maxlength="50"
+    />
+    <textarea 
+      placeholder="Votre commentaire..." 
+      id="commentText" 
+      required
+      rows="4"
+      maxlength="500"
+    ></textarea>
+    <button type="submit">Publier</button>
+  </form>
+
+  <div class="comments-list" id="commentsList">
+    <!-- Les commentaires seront ajoutés ici -->
+  </div>
+</div>
+
+<style>
+  .comments-section {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .comments-section h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .comment-form {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .comment-form input,
+  .comment-form textarea {
+    width: 100%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.9rem;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    transition: all 0.3s;
+  }
+
+  .comment-form input:focus,
+  .comment-form textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 157, 195, 0.15);
+  }
+
+  .comment-form input::placeholder,
+  .comment-form textarea::placeholder {
+    color: var(--text-dim);
+  }
+
+  .comment-form button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.85rem 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .comment-form button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(139, 157, 195, 0.25);
+  }
+
+  .comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .comment {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 2.5rem;
+    transition: all 0.3s;
+  }
+
+  .comment:hover {
+    border-color: var(--primary);
+  }
+
+  .comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comment-author {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.05rem;
+  }
+
+  .comment-date {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+
+  .comment-text {
+    color: var(--text-muted);
+    line-height: 1.8;
+    padding-top: 0.5rem;
+  }
+
+  .no-comments {
+    text-align: center;
+    color: var(--text-dim);
+    padding: 3rem;
+    font-style: italic;
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1px dashed var(--border);
+  }
+</style>
+
+<script src="https://unpkg.com/parse@5.3.0/dist/parse.min.js"></script>
+<script is:inline define:vars={{ appId: import.meta.env.PUBLIC_BACK4APP_APP_ID, jsKey: import.meta.env.PUBLIC_BACK4APP_JS_KEY, serverURL: import.meta.env.PUBLIC_BACK4APP_URL, postSlug }}>
+  window.addEventListener('load', function() {
+    // Initialize Parse
+    Parse.initialize(appId, jsKey);
+    Parse.serverURL = serverURL;
+    
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+  // Load comments from Back4App
+  async function loadComments() {
+    const commentsList = document.getElementById('commentsList');
+    if (!commentsList) return;
+
+    try {
+      const Comment = Parse.Object.extend('Comment');
+      const query = new Parse.Query(Comment);
+      query.equalTo('postSlug', postSlug);
+      query.descending('createdAt');
+      
+      const results = await query.find();
+
+      if (results.length === 0) {
+        commentsList.innerHTML = '<p class="no-comments">Aucun commentaire pour le moment. Soyez le premier à commenter !</p>';
+        return;
+      }
+
+      commentsList.innerHTML = results.map(comment => `
+        <div class="comment">
+          <div class="comment-header">
+            <span class="comment-author">${escapeHtml(comment.get('author'))}</span>
+            <span class="comment-date">${comment.get('createdAt').toLocaleDateString('fr-FR', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}</span>
+          </div>
+          <p class="comment-text">${escapeHtml(comment.get('text'))}</p>
+        </div>
+      `).join('');
+    } catch (error) {
+      console.error('Error loading comments:', error);
+      commentsList.innerHTML = '<p class="no-comments">Erreur lors du chargement des commentaires.</p>';
+    }
+  }  // Add comment
+  document.getElementById('commentForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const nameInput = document.getElementById('commentName');
+    const textInput = document.getElementById('commentText');
+    const submitButton = this.querySelector('button[type="submit"]');
+    
+    if (!nameInput || !textInput || !submitButton) return;
+    
+    const name = nameInput.value.trim();
+    const text = textInput.value.trim();
+    
+    if (!name || !text) return;
+
+    // Disable submit button
+    submitButton.disabled = true;
+    submitButton.textContent = 'Publication...';
+
+    try {
+      const Comment = Parse.Object.extend('Comment');
+      const comment = new Comment();
+      
+      comment.set('postSlug', postSlug);
+      comment.set('author', name);
+      comment.set('text', text);
+      
+      await comment.save();
+      
+      nameInput.value = '';
+      textInput.value = '';
+      
+      await loadComments();
+    } catch (error) {
+      console.error('Error posting comment:', error);
+      alert('Erreur lors de la publication du commentaire. Veuillez réessayer.');
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Publier';
+    }
+  });
+
+    // Load comments on page load
+    loadComments();
+  });
+</script>
