@@ -1,0 +1,112 @@
+---
+// ThemeToggle - Bouton pour basculer entre dark et light mode
+---
+
+<button id="theme-toggle" class="theme-toggle" aria-label="Changer de thème">
+  <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"></circle>
+    <line x1="12" y1="1" x2="12" y2="3"></line>
+    <line x1="12" y1="21" x2="12" y2="23"></line>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+    <line x1="1" y1="12" x2="3" y2="12"></line>
+    <line x1="21" y1="12" x2="23" y2="12"></line>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+  </svg>
+  <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    border-color: var(--primary);
+  }
+
+  .theme-toggle svg {
+    color: var(--text);
+    transition: all 0.3s ease;
+  }
+
+  .sun-icon {
+    display: none;
+  }
+
+  .moon-icon {
+    display: block;
+  }
+
+  :root[data-theme="light"] .sun-icon {
+    display: block;
+  }
+
+  :root[data-theme="light"] .moon-icon {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .theme-toggle {
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+</style>
+
+<script>
+  // Fonction pour obtenir le thème
+  function getTheme() {
+    if (typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored;
+    }
+    // Dark mode par défaut
+    return 'dark';
+  }
+
+  // Fonction pour appliquer le thème
+  function setTheme(theme: string) {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('theme', theme);
+    }
+  }
+
+  // Appliquer le thème au chargement
+  const initialTheme = getTheme();
+  setTheme(initialTheme);
+
+  // Gérer le clic sur le bouton
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+  });
+</script>

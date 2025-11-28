@@ -1,5 +1,6 @@
 ---
 import PageTracker from '../components/PageTracker.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 
 interface Props {
   title: string;
@@ -17,12 +18,20 @@ const { title } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <script is:inline>
+      // Appliquer le thème avant le rendu pour éviter le flash
+      (function() {
+        const theme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
   </head>
   <body>
     <div class="grain"></div>
     <main>
       <slot />
     </main>
+    <ThemeToggle />
     <PageTracker />
   </body>
 </html>
@@ -36,7 +45,10 @@ const { title } = Astro.props;
     --secondary: #dda15e;
     --accent: #bc6c25;
     --warning: #f4a261;
-    
+  }
+
+  /* Dark mode (default) */
+  :root {
     --bg: #1c1c1e;
     --bg-elevated: #2c2c2e;
     --bg-card: #3a3a3c;
@@ -45,6 +57,18 @@ const { title } = Astro.props;
     --text: #f5f5f7;
     --text-muted: #d1d1d6;
     --text-dim: #98989d;
+  }
+
+  /* Light mode */
+  :root[data-theme="light"] {
+    --bg: #ffffff;
+    --bg-elevated: #f5f5f7;
+    --bg-card: #fafafa;
+    --border: rgba(0, 0, 0, 0.1);
+    
+    --text: #1c1c1e;
+    --text-muted: #48484a;
+    --text-dim: #8e8e93;
   }
 
   * {
