@@ -1,36 +1,41 @@
 ---
 // PageTracker - Enregistre automatiquement les vues de pages dans Back4App
-const isDev = import.meta.env.DEV;
+const isProduction = import.meta.env.PROD;
 ---
 
-{!isDev && (
-  <>
-    <script src="https://unpkg.com/parse@5.3.0/dist/parse.min.js"></script>
-    <script is:inline define:vars={{ appId: import.meta.env.PUBLIC_BACK4APP_APP_ID, jsKey: import.meta.env.PUBLIC_BACK4APP_JS_KEY, serverURL: import.meta.env.PUBLIC_BACK4APP_URL }}>
-  window.addEventListener('load', function() {
-    // Initialize Parse
-    Parse.initialize(appId, jsKey);
-    Parse.serverURL = serverURL;
-
-    // Fonction pour enregistrer une vue de page
-    async function trackPageView() {
-      try {
-        const PageView = Parse.Object.extend('PageView');
-        const pageView = new PageView();
-
-        pageView.set('page', window.location.pathname);
-        pageView.set('title', document.title);
-
-        await pageView.save();
-        console.log('Page view tracked successfully');
-      } catch (error) {
-        console.error('Page tracking error:', error);
-      }
+<script define:vars={{ isProduction }}>
+  // Fonction pour enregistrer une vue de page
+  async function trackPageView() {
+    // Ne tracker qu'en production
+    if (!isProduction) {
+      console.log('Dev mode: Page view not tracked');
+      return;
     }
 
-    // Enregistrer la vue
+    try {
+      // Attendre que Parse soit chargé
+      if (typeof Parse === 'undefined') {
+        console.error('Parse is not loaded');
+        return;
+      }
+
+      const PageView = Parse.Object.extend('PageView');
+      const pageView = new PageView();
+
+      pageView.set('page', window.location.pathname);
+      pageView.set('title', document.title);
+
+      await pageView.save();
+      console.log('Page view tracked successfully');
+    } catch (error) {
+      console.error('Page tracking error:', error);
+    }
+  }
+
+  // Enregistrer la vue au chargement
+  if (document.readyState === 'complete') {
     trackPageView();
-  });
-    </script>
-  </>
-)}
+  } else {
+    window.addEventListener('load', trackPageView);
+  }
+</script>

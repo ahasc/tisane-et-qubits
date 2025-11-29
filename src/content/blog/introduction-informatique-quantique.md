@@ -34,13 +34,13 @@ Les **qubits**, eux, c'est autre chose ! Imaginez un interrupteur qui peut être
 
 ## Le chat mort-vivant de Schrödinger
 
-Vous connaissez l'experience du chat de Schrödinger ? Quelque soit votre réponse, je vais quand même vous l'expliquer. C'est mon blog, je fais ce que je veux après tout !
+Vous connaissez l'experience du **chat de Schrödinger** ? Quelque soit votre réponse, je vais quand même vous l'expliquer. C'est mon blog, je fais ce que je veux après tout !
 
 En 1935, le physicien Erwin Schrödinger propose une experience de pensée pour illustrer les incohérences logiques apportées par la physique quantique.
 
 Dans son experience fictive, un chat est placé dans une boite hermetiquement fermée dont on ne peut pas voir l'interieur. Un système de mesure de la radioactivité permet de liberer du poison dans la boite de manière aléatoire. En fait, ça a plutôt à voir avec la demie-vie d'une particule radioactive mais c'est pas le plus important.
 
-L'essentiel à comprendre, c'est qu'à un instant T, on ne sait pas si le mécanisme s'est déclenché, liberant ainsi le poison et tuant donc le chat. A ce fameux instant T, on peut considerer que le chat à autant de chances d'être mort que vivant, si bien qu'on peut considerer qu'il est les deux à la fois, tant qu'on à pas ouvert la boite pour verifier. Sauf que les lois quantiques ne sont pas censées s'appliquer à des choses aussi grosses qu'un chat. Là est tout le paradoxe du chat de Schrödinger !
+L'essentiel à comprendre, c'est qu'à un instant T, on ne sait pas si le mécanisme s'est déclenché, liberant ainsi le poison et tuant donc le chat. A ce fameux instant T, on peut considerer que le chat à autant de chances d'être mort que vivant, si bien qu'on peut considerer qu'il est les **deux à la fois**, tant qu'on à pas ouvert la boite pour verifier. Sauf que les lois quantiques ne sont pas censées s'appliquer à des choses aussi grosses qu'un chat. Là est tout le paradoxe du chat de Schrödinger !
 
 ## La superposition d'états : être partout à la fois
 
@@ -50,14 +50,14 @@ Vous vous rappelez l'exemple du téléphone perdu dans la maison ? Cette propri�
 
 ## L'intrication : la connexion mystérieuse
 
-Une des lois les plus contre-intuitives de la physique quantique ! Immaginez deux particules, une ici sur Terre et l'autre en orbite autour de M31-V1 (c'est une étoile située dans la galaxie d'Andromède, donc trèèèèèèès loin de nous). La physique quantique dit que deux particules intriquées sont liées entre elles peu importe la distance. Si je tourne ma particule sur Terre à 90 degrés, alors, instantanèment, l'autre particule subit le même effet, alors que rien ne les lie entre elles (mis à part l'intrication quantique)
+Une des lois les plus contre-intuitives de la physique quantique ! Immaginez deux particules, une ici sur Terre et l'autre en orbite autour de M31-V1 (c'est une étoile située dans la galaxie d'Andromède, donc trèèèèèèès loin de nous). La physique quantique dit que deux particules intriquées sont liées entre elles peu importe la distance. Si je tourne ma particule sur Terre à 90 degrés, alors, **instantanèment**, l'autre particule subit le même effet, alors que rien ne les lie entre elles (mis à part l'intrication quantique)
 
 ## Ok, mais tout ça pour quoi faire ?
 
 - **Trouver des nouveaux médicaments** : La superposition d'état permet de tester beaucoup plus efficacement l'action de molecules entre elles
 - **Protéger nos données** : Créer des codes impossibles à craquer (ou au contraire, craquer les codes actuels !), toujours grâce à la superposition
 - **Optimiser tout et n'importe quoi** : Du trafic routier aux portefeuilles d'investissement, encore et toujours grâce à la superposition
-- **Améliorer l'IA** : Rendre nos intelligences artificielles encore plus... intelligentes, pourquoi pas après tout
+- **Améliorer l'IA** : Rendre nos intelligences artificielles encore plus... intelligentes, parce que pourquoi pas après tout
 
 ## Le petit mot de la fin
 

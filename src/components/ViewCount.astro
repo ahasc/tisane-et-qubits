@@ -12,46 +12,47 @@ const { page } = Astro.props;
   <span class="view-number">...</span>
 </span>
 
-<script src="https://unpkg.com/parse@5.3.0/dist/parse.min.js"></script>
-<script is:inline define:vars={{ appId: import.meta.env.PUBLIC_BACK4APP_APP_ID, jsKey: import.meta.env.PUBLIC_BACK4APP_JS_KEY, serverURL: import.meta.env.PUBLIC_BACK4APP_URL }}>
-  window.addEventListener('load', function() {
-    // Initialize Parse
-    Parse.initialize(appId, jsKey);
-    Parse.serverURL = serverURL;
-
-    // Fonction pour récupérer le nombre de vues
-    async function fetchViewCount() {
-      const viewCountElements = document.querySelectorAll('.view-count');
-      
-      for (const element of viewCountElements) {
-        const page = element.getAttribute('data-page');
-        const numberSpan = element.querySelector('.view-number');
-        
-        try {
-          const PageView = Parse.Object.extend('PageView');
-          const query = new Parse.Query(PageView);
-          query.equalTo('page', page);
-          
-          const count = await query.count();
-          
-          if (numberSpan) {
-            numberSpan.textContent = count.toLocaleString('fr-FR');
-          }
-        } catch (error) {
-          if (numberSpan) {
-            numberSpan.textContent = '0';
-          }
-          console.error('View count fetch failed:', error);
-        }
-      }
+<script>
+  // Fonction pour récupérer le nombre de vues
+  async function fetchViewCount() {
+    // Attendre que Parse soit chargé
+    if (typeof Parse === 'undefined') {
+      console.error('Parse is not loaded for ViewCount');
+      return;
     }
 
-    // Charger le compteur
-    fetchViewCount();
-  });
-</script>
+    const viewCountElements = document.querySelectorAll('.view-count');
+    
+    for (const element of viewCountElements) {
+    const page = element.getAttribute('data-page');
+    const numberSpan = element.querySelector('.view-number');
+    
+    try {
+      const PageView = Parse.Object.extend('PageView');
+      const query = new Parse.Query(PageView);
+      query.equalTo('page', page);
+      
+      const count = await query.count();
+      
+      if (numberSpan) {
+        numberSpan.textContent = count.toLocaleString('fr-FR');
+      }
+    } catch (error) {
+      if (numberSpan) {
+        numberSpan.textContent = '0';
+      }
+      console.error('View count fetch failed:', error);
+    }
+  }
+}
 
-<style>
+// Charger le compteur au chargement
+if (document.readyState === 'complete') {
+  fetchViewCount();
+} else {
+  window.addEventListener('load', fetchViewCount);
+}
+</script><style>
   .view-count {
     display: inline-flex;
     align-items: center;
