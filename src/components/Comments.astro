@@ -1,5 +1,7 @@
 ---
-const postSlug = Astro.url.pathname.split('/').pop() || '';
+// Extraire le slug de l'article depuis l'URL
+const pathname = Astro.url.pathname.replace(/\/$/, ''); // Supprimer le / final
+const postSlug = pathname.split('/').pop() || '';
 ---
 
 <div class="comments-section">
